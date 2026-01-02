@@ -1,43 +1,28 @@
 <!DOCTYPE html>
 <html>
-<head>
-<link rel="stylesheet" href="../assets/css/style.css">
-</head>
+<head><link rel="stylesheet" href="assets/css/style.css"></head>
 <body>
-
 <h2 style="text-align:center">Admin Dashboard</h2>
-<div id="orders" style="padding:40px"></div>
+<div id="orders" style="max-width:1000px;margin:auto;padding:30px"></div>
 
 <script type="module">
-import { supabase } from "../supabase/config.js";
+import { supabase } from "./supabase/config.js";
 
-const { data: session } = await supabase.auth.getUser();
-if(!session.user) location.href="login.html";
+const { data:user } = await supabase.auth.getUser()
+const { data:profile } = await supabase.from("profiles").select("role").eq("id",user.user.id).single()
+if(profile.role!=="admin") location.href="products.html"
 
-const { data: profile } = await supabase.from("profiles").select("role").eq("id", session.user.id).single();
-if(profile.role !== "admin") location.href="products.html";
+const { data:orders } = await supabase.from("orders").select(`id,status,created_at,order_items(quantity,custom_text,products(name))`)
 
-const { data: orders } = await supabase.from("orders").select(`
-  id, status, created_at,
-  order_items(quantity, custom_text, products(name))
-`);
-
-const container = document.getElementById("orders");
-
+const box=document.getElementById("orders")
 orders.forEach(o=>{
-  container.innerHTML += `
-    <div style="background:white;padding:20px;margin-bottom:20px">
-      <b>Order ID:</b> ${o.id}<br>
-      <b>Status:</b> ${o.status}<br>
-      <b>Date:</b> ${o.created_at}<br>
-      <hr>
-      ${o.order_items.map(i=>`
-        ${i.products.name} — Qty: ${i.quantity} — Text: ${i.custom_text}
-      `).join("<br>")}
-    </div>
-  `;
-});
+box.innerHTML+=`
+<div style="background:white;margin-bottom:20px;padding:20px;border-radius:10px">
+<b>Order:</b> ${o.id}<br>
+<b>Status:</b> ${o.status}<br>
+${o.order_items.map(i=>`${i.products.name} — Qty:${i.quantity} — ${i.custom_text}`).join("<br>")}
+</div>`
+})
 </script>
-
 </body>
-</html>
+

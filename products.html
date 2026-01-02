@@ -1,33 +1,35 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
-<h2 style="text-align:center">Products</h2>
-<div id="products" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:40px"></div>
+<h2 style="text-align:center;margin-top:30px">All Products</h2>
+<div id="products" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;padding:40px"></div>
 
 <script type="module">
-import { supabase } from "../supabase/config.js";
+import { supabase } from "./supabase/config.js";
 
 const { data: products } = await supabase.from("products").select();
 
-const container = document.getElementById("products");
+const box=document.getElementById("products");
+products.forEach(p=>{
+box.innerHTML+=`
+<div style="background:white;padding:20px;border-radius:10px">
+<img src="${p.image}" style="width:100%;height:150px;object-fit:cover">
+<h3>${p.name}</h3>
+<p>${p.description}</p>
+<button onclick="order('${p.id}')">Customize & Order</button>
+</div>`
+})
 
-products.forEach(p => {
-  container.innerHTML += `
-    <div style="background:white;padding:20px;border-radius:8px">
-      <img src="${p.image}" style="width:100%">
-      <h3>${p.name}</h3>
-      <p>${p.description}</p>
-      <button onclick="selectProduct('${p.id}')">Order Now</button>
-    </div>
-  `;
-});
-
-window.selectProduct = id => localStorage.setItem("product", id) || location.assign("cart.html");
+window.order=id=>{
+localStorage.setItem("product",id)
+location.href="product.html"
+}
 </script>
-
 </body>
 </html>
+

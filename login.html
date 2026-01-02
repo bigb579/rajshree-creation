@@ -1,27 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+body{background:#0f172a}
+.box{max-width:360px;margin:100px auto;background:white;padding:30px;border-radius:12px;box-shadow:0 20px 40px rgba(0,0,0,.3)}
+h2{text-align:center}
+</style>
 </head>
 <body>
-<div class="container">
+<div class="box">
 <h2>Login</h2>
 <input id="email" placeholder="Email">
-<input id="password" type="password">
+<input id="password" type="password" placeholder="Password">
 <button onclick="login()">Login</button>
 </div>
 
 <script type="module">
-import { supabase } from "../supabase/config.js";
-
+import { supabase } from "./supabase/config.js";
 async function login(){
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: email.value,
-    password: password.value
-  });
-
-  if(!error) location.href = "products.html";
+const { error } = await supabase.auth.signInWithPassword({ email:email.value, password:password.value })
+if(!error) location.href="products.html"
 }
 </script>
 </body>
 </html>
+

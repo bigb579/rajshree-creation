@@ -1,33 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+body{background:#0f172a}
+.box{max-width:360px;margin:100px auto;background:white;padding:30px;border-radius:12px;box-shadow:0 20px 40px rgba(0,0,0,.3)}
+</style>
 </head>
 <body>
-<div class="container">
+<div class="box">
 <h2>Create Account</h2>
 <input id="name" placeholder="Full Name">
 <input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
+<input id="password" type="password">
 <button onclick="signup()">Sign Up</button>
 </div>
 
 <script type="module">
-import { supabase } from "../supabase/config.js";
-
+import { supabase } from "./supabase/config.js";
 async function signup(){
-  const { user } = await supabase.auth.signUp({
-    email: email.value,
-    password: password.value
-  });
-
-  await supabase.from('profiles').insert({
-    id: user.id,
-    name: name.value
-  });
-
-  window.location.href = "login.html";
+const { data } = await supabase.auth.signUp({ email:email.value, password:password.value })
+await supabase.from("profiles").insert({ id:data.user.id, name:name.value })
+alert("Account created. Please login.")
+location.href="login.html"
 }
 </script>
 </body>
 </html>
+
